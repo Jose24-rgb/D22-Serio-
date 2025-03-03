@@ -1,0 +1,77 @@
+<!DOCTYPE html> 
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Back Office - Aggiungi Prodotto</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="Frontpage.html">E-commerce</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="Backoffice.html">Back Office</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Aggiungi Prodotto</h1>
+        <form id="product-form">
+            <div class="mb-3">
+                <label for="name" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Descrizione</label>
+                <textarea class="form-control" id="description" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="brand" class="form-label">Marca</label>
+                <input type="text" class="form-control" id="brand" required>
+            </div>
+            <div class="mb-3">
+                <label for="imageUrl" class="form-label">URL Immagine</label>
+                <input type="text" class="form-control" id="imageUrl" required>
+            </div>
+            <div class="mb-3">
+                <label for="price" class="form-label">Prezzo</label>
+                <input type="number" class="form-control" id="price" required>
+            </div>
+            <div id="button-container" class="d-flex">
+                <button type="button" id="add-product-btn" class="btn btn-primary">Aggiungi Prodotto</button>
+                <button type="button" id="edit-mode-btn" class="btn btn-secondary ms-2">Modificare</button>
+                <button type="button" id="save-changes-btn" class="btn btn-success ms-2" style="display: none;">Salva Modifiche</button>
+                <button id="delete-selected-btn" style="display:none;" class="btn btn-danger">Elimina Selezionati</button>
+
+
+
+                
+                
+            </div>
+        </form>
+
+        <!-- Barra di ricerca -->
+        <div class="container mt-4">
+            <input type="text" id="search-input" class="form-control" placeholder="Cerca prodotti..." oninput="searchProducts()">
+        </div>
+
+        <h2 class="mt-4">Lista Prodotti</h2>
+        <div class="row" id="product-list"></div>
+    </div>
+    <script src="assets/js/Backoffice.js"></script>
+</body>
+</html>
+
+
+
+
+
