@@ -4,6 +4,7 @@ const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2JkZmZhMzFlMTQw
 let allProducts = [];
 let editingProductId = null;
 let isEditMode = false;
+let selectedProducts = []; // Array per tenere traccia dei prodotti selezionati
 
 document.getElementById("add-product-btn").addEventListener("click", () => {
     const name = document.getElementById("name").value.trim();
@@ -28,7 +29,10 @@ document.getElementById("add-product-btn").addEventListener("click", () => {
 
 document.getElementById("edit-mode-btn").addEventListener("click", () => {
     toggleEditMode();
+    resetSelectedCards(); 
 });
+
+document.getElementById("delete-selected-btn").addEventListener("click", deleteSelectedProducts);
 
 function toggleEditMode() {
     if (isEditMode) {
@@ -60,9 +64,32 @@ function resetProductCards() {
     });
 }
 
+function resetSelectedCards() {
+    const selectedCards = document.querySelectorAll(".product-card.selected");
+    selectedCards.forEach(card => {
+        card.classList.remove("selected");
+        card.classList.add("deselected"); // Per mantenere la card nel suo stato normale
+    });
+}
+
 function selectProductForEditing(event) {
     if (!isEditMode) return;
+
     const productId = event.currentTarget.getAttribute("data-id");
+    const productCard = event.currentTarget;
+
+    // Deseleziona il precedente prodotto selezionato, se c'era
+    const previouslySelectedCard = document.querySelector(".product-card.selected");
+    if (previouslySelectedCard && previouslySelectedCard !== productCard) {
+        previouslySelectedCard.classList.remove("selected");
+        previouslySelectedCard.classList.add("deselected");
+    }
+
+    // Seleziona il nuovo prodotto
+    productCard.classList.add("selected");
+    productCard.classList.remove("deselected");
+
+    // Mostra i dettagli del prodotto selezionato nel modulo di modifica
     fetchProductData(productId).then(productData => {
         if (productData) {
             populateForm(productData);
@@ -71,6 +98,7 @@ function selectProductForEditing(event) {
         }
     });
 }
+
 
 async function addProduct(newProduct) {
     try {
@@ -125,6 +153,7 @@ function renderProducts(products) {
             `<div class="card mb-4">
                 <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}">
                 <div class="card-body">
+                    <input type="checkbox" class="product-checkbox" data-id="${product._id}" onchange="toggleProductSelection(event, '${product._id}')">
                     <h5 class="card-title">${product.name}</h5>
                     <p class="card-text">${product.description}</p>
                     <p class="card-text"><strong>€${product.price}</strong></p>
@@ -172,6 +201,45 @@ async function deleteProduct(productId) {
     }
 }
 
+// Funzione per la selezione dei prodotti tramite checkbox
+function toggleProductSelection(event, productId) {
+    if (event.target.checked) {
+        selectedProducts.push(productId); // Aggiungi il prodotto selezionato
+    } else {
+        selectedProducts = selectedProducts.filter(id => id !== productId); // Rimuovi il prodotto deselezionato
+    }
+    toggleDeleteButton(); // Controlla se mostrare il pulsante "Elimina Selezionati"
+}
+
+// Funzione per mostrare o nascondere il pulsante "Elimina Selezionati"
+function toggleDeleteButton() {
+    const deleteButton = document.getElementById("delete-selected-btn");
+    if (selectedProducts.length > 0) {
+        deleteButton.style.display = "inline-block"; // Mostra il pulsante
+    } else {
+        deleteButton.style.display = "none"; // Nascondi il pulsante
+    }
+}
+
+// Funzione per eliminare i prodotti selezionati
+async function deleteSelectedProducts() {
+    if (selectedProducts.length === 0) return;
+
+    if (confirm("Sei sicuro di voler eliminare questi prodotti?")) {
+        try {
+            for (const productId of selectedProducts) {
+                await deleteProduct(productId); // Elimina ciascun prodotto selezionato
+            }
+            selectedProducts = []; // Resetta la lista dei prodotti selezionati
+            toggleDeleteButton(); // Nascondi il pulsante
+            alert("Prodotti eliminati con successo.");
+        } catch (error) {
+            console.error("Errore:", error);
+            alert("Si è verificato un errore durante l'eliminazione dei prodotti.");
+        }
+    }
+}
+
 function isValidURL(url) {
     const pattern = new RegExp('^(https?:\\/\\/)?([\\w\\d\\-]+\\.)+[\\w\\d\\-]{2,4}(\\/.*)?$', 'i');
     return pattern.test(url);
@@ -191,6 +259,7 @@ document.getElementById("save-changes-btn").addEventListener("click", () => {
 
     // Dopo aver salvato le modifiche, cambia il pulsante a "Modificare"
     document.getElementById("edit-mode-btn").textContent = "Modificare";
+    resetSelectedCards(); // Rimuovi l'evidenziazione da tutte le card
 });
 
 function editProduct(productId) {
@@ -212,6 +281,7 @@ function populateForm(productData) {
 }
 
 fetchProducts();
+
 
 
 

@@ -22,24 +22,28 @@ async function fetchProducts() {
 
 function renderProducts(products) {
     const productList = document.getElementById("product-list");
-    productList.innerHTML = "";
+    productList.innerHTML = ""; // Pulisce la lista dei prodotti ogni volta che viene chiamata la funzione
+
     products.forEach(product => {
-        const productCard = document.createElement("div");
-        productCard.classList.add("col-md-4");
-        productCard.innerHTML = `
-         <div class="card mb-4">
-          <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}">
-                <div class="card-body">
-                    <h5 class="card-title">${product.name}</h5>
-                    <p class="card-text">${product.description}</p>
-                    <p class="card-text"><strong>€${product.price}</strong></p>
-                    <a href="product.html?id=${product._id}" class="btn btn-primary">Dettagli</a> 
+        const productItem = document.createElement("div");
+        productItem.classList.add("col-md-4"); // Puoi aggiungere altre classi per controllare il layout
+
+        // Aggiungi il prodotto senza il contenitore della card
+        productItem.innerHTML = `
+            <div class="product-item mb-4">
+                <img src="${product.imageUrl}" class="img-fluid" alt="${product.name}">
+                <div class="product-info">
+                    <h5>${product.name}</h5>
+                    <p>${product.description}</p>
+                    <p><strong>€${product.price}</strong></p>
+                    <a href="product.html?id=${product._id}" class="btn btn-primary">Dettagli</a>
                 </div>
             </div>
         `;
-        productList.appendChild(productCard);
+        productList.appendChild(productItem);
     });
 }
+
 
 // Funzione di ricerca
 function searchProducts() {
